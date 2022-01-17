@@ -11,3 +11,15 @@ servers:
   - serverId: 3
     host: "server3"
     port: "8080"
+  - serverId: 4
+    host: "server4"
+    port: "8080"
+  - serverId: 5
+    host: "server5"
+    port: "8080"
+  - serverId: 6
+    host: "server6"
+    port: "8080"
+  - serverId: 7
+    host: "server7"
+    port: "8080"

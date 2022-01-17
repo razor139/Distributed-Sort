@@ -158,6 +158,7 @@ func handleConn(conn net.Conn, ch chan<- Client) {
 func acceptConn(ln net.Listener, ch chan<- Client, serverNum int) {
 	log.Printf("Accepting connections now\n")
 	var count int = 0
+	defer ln.Close()
 	for {
 		if count == serverNum-1 {
 			break
@@ -246,7 +247,7 @@ func main() {
 	/*
 		Implement Distributed Sort
 	*/
-	ch := make(chan Client)
+	ch := make(chan Client, 100)
 	all_records = read(os.Args[2])
 	fmt.Println("Amount of data in server:", serverId, "is :", len(all_records))
 	partData = partitionData(all_records, int(math.Log2(float64(len(scs.Servers)))))
