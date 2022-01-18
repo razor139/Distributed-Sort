@@ -106,7 +106,7 @@ func (r example_records) Less(i, j int) bool {
 func sendClientData(dataSend [][]byte, Host string, Port string) {
 	var clientConn net.Conn
 	var err error
-	log.Println("Amount of records to be sent to:", Host, "is:", len(dataSend))
+	//log.Println("Amount of records to be sent to:", Host, "is:", len(dataSend))
 	for {
 		clientConn, err = net.Dial("tcp", Host+":"+Port)
 		if err != nil {
@@ -126,7 +126,7 @@ func sendClientData(dataSend [][]byte, Host string, Port string) {
 			log.Println("Send Failed")
 		}
 	}
-	log.Printf("All data sent\n")
+	//log.Printf("All data sent\n")
 	//clientConn.Write([]byte("Done"))
 }
 
@@ -141,6 +141,7 @@ func handleConn(conn net.Conn, ch chan<- Client) {
 				log.Printf("Receive failed: %s\n", err)
 				continue
 			} else {
+				//log.Println("Data tx terminated by node")
 				break
 			}
 		}
@@ -149,7 +150,7 @@ func handleConn(conn net.Conn, ch chan<- Client) {
 		// }
 		res = append(res, buff[0:bytes]...)
 	}
-	log.Printf("Received total data size: %d\n", len(res))
+	//log.Printf("Received total data size: %d\n", len(res))
 	newRecord := Client{conn, res}
 	ch <- newRecord
 }
@@ -174,10 +175,10 @@ func acceptConn(ln net.Listener, ch chan<- Client, serverNum int) {
 		go handleConn(conn, ch)
 
 	}
-	log.Printf("Ending accept conn\n")
+	//log.Printf("Ending accept conn\n")
 }
 
-func consolData(ch <-chan Client, serverNum int, serverId int) [][]byte {
+func consolData(ch <-chan Client, serverNum int) [][]byte {
 	var recData [][]byte
 	numOfClientsComp := 0
 	for {
@@ -205,13 +206,13 @@ func createServer(servers ServerConfigs, serverId int, ch chan<- Client, dataSen
 	for i := 0; i < len(servers.Servers); i++ {
 
 		if i != serverId {
-			log.Printf("Creating client connections with : %d\n", i)
+			//log.Printf("Creating client connections with : %d\n", i)
 			go sendClientData(dataSend[i], servers.Servers[i].Host, servers.Servers[i].Port)
 		}
 	}
 
 	go acceptConn(ln, ch, len(servers.Servers))
-	log.Println("Closing all connections at Server:", serverId)
+	//log.Println("Closing all connections at Server:", serverId)
 }
 
 func partitionData(records [][]byte, numServers int) map[int][][]byte {
@@ -256,7 +257,7 @@ func main() {
 	fmt.Println("Data has been partitioned")
 
 	go createServer(scs, serverId, ch, partData)
-	recData = consolData(ch, len(scs.Servers), serverId)
+	recData = consolData(ch, len(scs.Servers))
 	fmt.Println("Waiting for communication to complete")
 	for i := 0; i < len(partData[serverId]); i++ {
 		recData = append(recData, partData[serverId][i])

@@ -36,3 +36,111 @@ services:
       CONFIG_FILE_PATH: config/servers.yaml
     volumes:
       - ./src/dist:/CSE224/src/dist
+  server4:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 4
+      INPUT_FILE_PATH: dist/testcase1/input-4.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-4.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server5:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 5
+      INPUT_FILE_PATH: dist/testcase1/input-5.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-5.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server6:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 6
+      INPUT_FILE_PATH: dist/testcase1/input-6.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-6.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server7:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 7
+      INPUT_FILE_PATH: dist/testcase1/input-7.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-7.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server8:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 8
+      INPUT_FILE_PATH: dist/testcase1/input-8.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-8.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server9:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 9
+      INPUT_FILE_PATH: dist/testcase1/input-9.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-9.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server10:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 10
+      INPUT_FILE_PATH: dist/testcase1/input-10.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-10.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server11:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 11
+      INPUT_FILE_PATH: dist/testcase1/input-11.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-11.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server12:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 12
+      INPUT_FILE_PATH: dist/testcase1/input-12.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-12.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server13:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 13
+      INPUT_FILE_PATH: dist/testcase1/input-13.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-13.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server14:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 14
+      INPUT_FILE_PATH: dist/testcase1/input-14.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-14.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
+  server15:
+    image: cse224-netsort
+    environment:
+      SERVER_ID: 15
+      INPUT_FILE_PATH: dist/testcase1/input-15.dat
+      OUTPUT_FILE_PATH: dist/testcase1/output-15.dat
+      CONFIG_FILE_PATH: config/servers.yaml
+    volumes:
+      - ./src/dist:/CSE224/src/dist
