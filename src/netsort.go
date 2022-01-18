@@ -187,9 +187,6 @@ func consolData(ch <-chan Client, serverNum int, serverId int) [][]byte {
 		recEntry := <-ch
 		numOfClientsComp++
 		for i := 0; i < len(recEntry.record)/100; i++ {
-			if int(recEntry.record[i*100 : (i+1)*100][0]>>(5)) != serverId {
-				log.Println("Received mismatched record in :", serverId)
-			}
 			recData = append(recData, recEntry.record[i*100:(i+1)*100])
 		}
 	}
