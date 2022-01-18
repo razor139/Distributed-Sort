@@ -127,7 +127,7 @@ func sendClientData(dataSend [][]byte, Host string, Port string) {
 		}
 	}
 	log.Printf("All data sent\n")
-	clientConn.Write([]byte("Done"))
+	//clientConn.Write([]byte("Done"))
 }
 
 func handleConn(conn net.Conn, ch chan<- Client) {
@@ -144,11 +144,10 @@ func handleConn(conn net.Conn, ch chan<- Client) {
 				break
 			}
 		}
-		if string(buff[0:bytes]) == "Done" {
-			break
-		}
-
-		res = append(res, buff...)
+		// if string(buff[0:bytes]) == "Done" {
+		// 	break
+		// }
+		res = append(res, buff[0:bytes]...)
 	}
 	log.Printf("Received total data size: %d\n", len(res))
 	newRecord := Client{conn, res}
@@ -158,7 +157,10 @@ func handleConn(conn net.Conn, ch chan<- Client) {
 func acceptConn(ln net.Listener, ch chan<- Client, serverNum int) {
 	log.Printf("Accepting connections now\n")
 	var count int = 0
-	defer ln.Close()
+	defer func() {
+		log.Println("Closing listener")
+		ln.Close()
+	}()
 	for {
 		if count == serverNum-1 {
 			break
@@ -175,7 +177,7 @@ func acceptConn(ln net.Listener, ch chan<- Client, serverNum int) {
 	log.Printf("Ending accept conn\n")
 }
 
-func consolData(ch <-chan Client, serverNum int) [][]byte {
+func consolData(ch <-chan Client, serverNum int, serverId int) [][]byte {
 	var recData [][]byte
 	numOfClientsComp := 0
 	for {
@@ -185,6 +187,9 @@ func consolData(ch <-chan Client, serverNum int) [][]byte {
 		recEntry := <-ch
 		numOfClientsComp++
 		for i := 0; i < len(recEntry.record)/100; i++ {
+			if int(recEntry.record[i*100 : (i+1)*100][0]>>(5)) != serverId {
+				log.Println("Received mismatched record in :", serverId)
+			}
 			recData = append(recData, recEntry.record[i*100:(i+1)*100])
 		}
 	}
@@ -254,7 +259,7 @@ func main() {
 	fmt.Println("Data has been partitioned")
 
 	go createServer(scs, serverId, ch, partData)
-	recData = consolData(ch, len(scs.Servers))
+	recData = consolData(ch, len(scs.Servers), serverId)
 	fmt.Println("Waiting for communication to complete")
 	for i := 0; i < len(partData[serverId]); i++ {
 		recData = append(recData, partData[serverId][i])
