@@ -103,7 +103,7 @@ func (r example_records) Less(i, j int) bool {
 	return false
 }
 
-func sendClientData(dataSend [][]byte, Host string, Port string) {
+func sendClientData(dataSend [][]byte, Host string, Port string, send chan<- bool) {
 	var clientConn net.Conn
 	var err error
 	//log.Println("Amount of records to be sent to:", Host, "is:", len(dataSend))
@@ -118,6 +118,7 @@ func sendClientData(dataSend [][]byte, Host string, Port string) {
 		}
 
 	}
+
 	defer clientConn.Close()
 
 	for i := 0; i < len(dataSend); i++ {
@@ -126,6 +127,7 @@ func sendClientData(dataSend [][]byte, Host string, Port string) {
 			log.Println("Send Failed")
 		}
 	}
+	send <- true
 	//log.Printf("All data sent\n")
 	//clientConn.Write([]byte("Done"))
 }
@@ -187,6 +189,7 @@ func consolData(ch <-chan Client, serverNum int) [][]byte {
 		}
 		recEntry := <-ch
 		numOfClientsComp++
+		log.Printf("Received total data size: %d\n", len(recEntry.record))
 		for i := 0; i < len(recEntry.record)/100; i++ {
 			recData = append(recData, recEntry.record[i*100:(i+1)*100])
 		}
@@ -194,8 +197,9 @@ func consolData(ch <-chan Client, serverNum int) [][]byte {
 	return recData
 }
 
-func createServer(servers ServerConfigs, serverId int, ch chan<- Client, dataSend map[int][][]byte) {
+func createServer(servers ServerConfigs, serverId int, ch chan<- Client, dataSend map[int][][]byte, send chan<- bool) {
 	ln, err := net.Listen("tcp", servers.Servers[serverId].Host+":"+servers.Servers[serverId].Port)
+
 	log.Printf("Server created at ID: %d with address: %s\n", serverId, ln.Addr().String())
 	if err != nil {
 		log.Fatalf(err.Error())
@@ -207,11 +211,12 @@ func createServer(servers ServerConfigs, serverId int, ch chan<- Client, dataSen
 
 		if i != serverId {
 			//log.Printf("Creating client connections with : %d\n", i)
-			go sendClientData(dataSend[i], servers.Servers[i].Host, servers.Servers[i].Port)
+			go sendClientData(dataSend[i], servers.Servers[i].Host, servers.Servers[i].Port, send)
 		}
 	}
 
 	go acceptConn(ln, ch, len(servers.Servers))
+
 	//log.Println("Closing all connections at Server:", serverId)
 }
 
@@ -230,6 +235,7 @@ func partitionData(records [][]byte, numServers int) map[int][][]byte {
 func main() {
 	var all_records, recData [][]byte
 	var partData map[int][][]byte
+
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	if len(os.Args) != 5 {
@@ -251,20 +257,27 @@ func main() {
 		Implement Distributed Sort
 	*/
 	ch := make(chan Client, 100)
+	send := make(chan bool, len(scs.Servers)-1)
 	all_records = read(os.Args[2])
 	fmt.Println("Amount of data in server:", serverId, "is :", len(all_records))
 	partData = partitionData(all_records, int(math.Log2(float64(len(scs.Servers)))))
 	fmt.Println("Data has been partitioned")
 
-	go createServer(scs, serverId, ch, partData)
+	go createServer(scs, serverId, ch, partData, send)
 	recData = consolData(ch, len(scs.Servers))
-	fmt.Println("Waiting for communication to complete")
+	log.Println("Waiting for communication to complete")
+	//wg.Wait()
+
+	for i := 0; i < len(scs.Servers)-1; i++ {
+		<-send
+	}
+	log.Println("Communication completed")
 	for i := 0; i < len(partData[serverId]); i++ {
 		recData = append(recData, partData[serverId][i])
 	}
-	fmt.Println("starting the sort")
+	log.Println("starting the sort")
 	sort.Sort(example_records(recData))
-	fmt.Println("Writing sorted data")
+	log.Println("Writing sorted data")
 	write(recData, os.Args[3])
 
 }
